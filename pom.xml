@@ -14,8 +14,8 @@
     <groupId>com.hsbc</groupId>
     <artifactId>transaction-management</artifactId>
     <version>1.0.0</version>
-    <name>汇丰银行交易管理系统</name>
-    <description>汇丰银行交易管理系统 - 支持交易的增删改查及缓存优化</description>
+    <name>HSBC Transaction Management System</name>
+    <description>HSBC Transaction Management System - Supporting transaction CRUD operations with cache optimization</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -120,4 +120,4 @@
             </plugin>
         </plugins>
     </build>
-</project> 
+</project>

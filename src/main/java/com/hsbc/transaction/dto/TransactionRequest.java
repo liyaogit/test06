@@ -1,36 +1,37 @@
 package com.hsbc.transaction.dto;
 
 import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 
 /**
- * 交易请求DTO
- * 
+ * Transaction Request DTO
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
 public class TransactionRequest {
 
-    @NotNull(message = "交易金额不能为空")
-    @DecimalMin(value = "0.01", message = "交易金额必须大于0")
+    @NotNull(message = "Transaction amount cannot be null")
+    @DecimalMin(value = "0.01", message = "Transaction amount must be greater than 0")
     private BigDecimal amount;
 
-    @NotBlank(message = "货币类型不能为空")
-    @Pattern(regexp = "^[A-Z]{3}$", message = "货币类型必须是3位大写字母代码")
+    @NotBlank(message = "Currency type cannot be blank")
+    @Pattern(regexp = "^[A-Z]{3}$", message = "Currency type must be a 3-letter uppercase code")
     private String currency;
 
-    @NotBlank(message = "交易类型不能为空")
+    @NotBlank(message = "Transaction type cannot be blank")
     private String transactionType;
 
-    @Size(max = 500, message = "描述信息不能超过500个字符")
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
     private String referenceNumber;
 
-    // 默认构造函数
+    // Default constructor
     public TransactionRequest() {}
 
-    // 带参数的构造函数
+    // Constructor with parameters
     public TransactionRequest(BigDecimal amount, String currency, String transactionType, String description, String referenceNumber) {
         this.amount = amount;
         this.currency = currency;
@@ -90,4 +91,4 @@ public class TransactionRequest {
                 ", referenceNumber='" + referenceNumber + '\'' +
                 '}';
     }
-} 
+}

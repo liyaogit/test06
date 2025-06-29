@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 全局异常处理器
- * 
+ * Global Exception Handler
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -25,14 +25,14 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * 处理交易未找到异常
+     * Handle transaction not found exception
      */
     @ExceptionHandler(TransactionNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleTransactionNotFoundException(TransactionNotFoundException ex) {
-        logger.warn("交易未找到: {}", ex.getMessage());
+        logger.warn("Transaction not found: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                "交易未找到",
+                "Transaction Not Found",
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -40,14 +40,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理重复交易异常
+     * Handle duplicate transaction exception
      */
     @ExceptionHandler(DuplicateTransactionException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateTransactionException(DuplicateTransactionException ex) {
-        logger.warn("重复交易: {}", ex.getMessage());
+        logger.warn("Duplicate transaction: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
-                "重复交易",
+                "Duplicate Transaction",
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -55,14 +55,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理无效交易异常
+     * Handle invalid transaction exception
      */
     @ExceptionHandler(InvalidTransactionException.class)
     public ResponseEntity<ErrorResponse> handleInvalidTransactionException(InvalidTransactionException ex) {
-        logger.warn("无效交易: {}", ex.getMessage());
+        logger.warn("Invalid transaction: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                "无效交易",
+                "Invalid Transaction",
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -70,12 +70,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理参数验证异常
+     * Handle parameter validation exception
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        logger.warn("参数验证失败: {}", ex.getMessage());
-        
+        logger.warn("Parameter validation failed: {}", ex.getMessage());
         Map<String, String> validationErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -85,8 +84,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                "参数验证失败",
-                "请检查输入参数",
+                "Parameter Validation Failed",
+                "Please check input parameters",
                 LocalDateTime.now(),
                 validationErrors
         );
@@ -94,22 +93,22 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理通用异常
+     * Handle generic exception
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        logger.error("系统异常: ", ex);
+        logger.error("System exception: ", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "系统异常",
-                "系统内部错误，请稍后重试",
+                "System Exception",
+                "Internal system error, please try again later",
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
-     * 错误响应类
+     * Error Response Class
      */
     public static class ErrorResponse {
         private int status;
@@ -125,7 +124,7 @@ public class GlobalExceptionHandler {
             this.timestamp = timestamp;
         }
 
-        public ErrorResponse(int status, String error, String message, LocalDateTime timestamp, 
+        public ErrorResponse(int status, String error, String message, LocalDateTime timestamp,
                            Map<String, String> validationErrors) {
             this(status, error, message, timestamp);
             this.validationErrors = validationErrors;
@@ -172,4 +171,4 @@ public class GlobalExceptionHandler {
             this.validationErrors = validationErrors;
         }
     }
-} 
+}

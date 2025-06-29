@@ -26,8 +26,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * 交易服务测试类
- * 
+ * Transaction Service Test Class
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -112,7 +112,7 @@ class TransactionServiceTest {
         // When & Then
         assertThatThrownBy(() -> transactionService.createTransaction(invalidRequest))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("交易金额无效");
+                .hasMessageContaining("Invalid transaction amount");
     }
 
     @Test
@@ -129,7 +129,7 @@ class TransactionServiceTest {
         // When & Then
         assertThatThrownBy(() -> transactionService.createTransaction(invalidRequest))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("无效的货币类型");
+                .hasMessageContaining("Invalid currency type");
     }
 
     @Test
@@ -146,7 +146,7 @@ class TransactionServiceTest {
         // When & Then
         assertThatThrownBy(() -> transactionService.createTransaction(invalidRequest))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("无效的交易类型");
+                .hasMessageContaining("Invalid transaction type");
     }
 
     @Test
@@ -183,7 +183,7 @@ class TransactionServiceTest {
         // When & Then
         assertThatThrownBy(() -> transactionService.getTransactionById(""))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("交易ID不能为空");
+                .hasMessageContaining("Transaction ID cannot be empty");
     }
 
     @Test
@@ -212,11 +212,11 @@ class TransactionServiceTest {
         // When & Then
         assertThatThrownBy(() -> transactionService.getTransactions(0, 0))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("页面大小必须在1-100之间");
+                .hasMessageContaining("Page size must be between 1-100");
 
         assertThatThrownBy(() -> transactionService.getTransactions(0, 101))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("页面大小必须在1-100之间");
+                .hasMessageContaining("Page size must be between 1-100");
     }
 
     @Test
@@ -224,7 +224,7 @@ class TransactionServiceTest {
         // When & Then
         assertThatThrownBy(() -> transactionService.getTransactions(-1, 10))
                 .isInstanceOf(InvalidTransactionException.class)
-                .hasMessageContaining("页码不能小于0");
+                .hasMessageContaining("Page number cannot be less than 0");
     }
 
     @Test
@@ -318,4 +318,4 @@ class TransactionServiceTest {
         assertThat(exists).isFalse();
         verify(transactionRepository).existsById("non-existing");
     }
-} 
+}

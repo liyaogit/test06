@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 缓存配置类
- * 
+ * Cache Configuration Class
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -18,24 +18,24 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
 
     /**
-     * 配置Caffeine缓存管理器
+     * Configure Caffeine cache manager
      */
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                // 最大缓存条目数
+                // Maximum cache entries
                 .maximumSize(1000)
-                // 缓存过期时间：写入后1小时过期
+                // Cache expiration time: expire 1 hour after write
                 .expireAfterWrite(1, TimeUnit.HOURS)
-                // 统计缓存命中率
+                // Record cache hit rate statistics
                 .recordStats());
         return cacheManager;
     }
 
     /**
-     * 交易缓存名称常量
+     * Transaction cache name constants
      */
     public static final String TRANSACTION_CACHE = "transactions";
     public static final String TRANSACTION_LIST_CACHE = "transactionList";
-} 
+}

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 交易响应DTO
- * 
+ * Transaction Response DTO
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -19,11 +19,11 @@ public class TransactionResponse {
     private String description;
     private String referenceNumber;
 
-    // 默认构造函数
+    // Default constructor
     public TransactionResponse() {}
 
-    // 带参数的构造函数
-    public TransactionResponse(String id, BigDecimal amount, String currency, String transactionType, 
+    // Constructor with parameters
+    public TransactionResponse(String id, BigDecimal amount, String currency, String transactionType,
                              LocalDateTime timestamp, String description, String referenceNumber) {
         this.id = id;
         this.amount = amount;
@@ -103,4 +103,4 @@ public class TransactionResponse {
                 ", referenceNumber='" + referenceNumber + '\'' +
                 '}';
     }
-} 
+}

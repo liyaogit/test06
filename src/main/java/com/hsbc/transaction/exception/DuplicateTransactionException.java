@@ -1,8 +1,8 @@
 package com.hsbc.transaction.exception;
 
 /**
- * 重复交易异常
- * 
+ * Duplicate Transaction Exception
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -17,6 +17,6 @@ public class DuplicateTransactionException extends RuntimeException {
     }
 
     public static DuplicateTransactionException withReferenceNumber(String referenceNumber) {
-        return new DuplicateTransactionException("重复的交易参考编号: " + referenceNumber);
+        return new DuplicateTransactionException("Duplicate transaction reference number: " + referenceNumber);
     }
-} 
+}

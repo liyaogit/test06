@@ -3,8 +3,8 @@ package com.hsbc.transaction.dto;
 import java.util.List;
 
 /**
- * 分页响应DTO
- * 
+ * Paged Response DTO
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -18,10 +18,10 @@ public class PagedResponse<T> {
     private boolean first;
     private boolean last;
 
-    // 默认构造函数
+    // Default constructor
     public PagedResponse() {}
 
-    // 带参数的构造函数
+    // Constructor with parameters
     public PagedResponse(List<T> content, int page, int size, long totalElements) {
         this.content = content;
         this.page = page;
@@ -101,4 +101,4 @@ public class PagedResponse<T> {
                 ", last=" + last +
                 '}';
     }
-} 
+}

@@ -1,65 +1,65 @@
-# 多阶段构建 Dockerfile for 汇丰银行交易管理系统
+# Multi-stage build Dockerfile for HSBC Transaction Management System
 
-# 第一阶段：构建阶段
+# First stage: Build stage
 FROM openjdk:21-jdk-slim as builder
 
-# 设置工作目录
+# Set working directory
 WORKDIR /app
 
-# 复制 Maven 配置文件
+# Copy Maven configuration files
 COPY pom.xml .
 
-# 复制 Maven Wrapper（如果存在）
+# Copy Maven Wrapper (if exists)
 COPY .mvn .mvn
 COPY mvnw .
 
-# 下载依赖（利用 Docker 缓存）
+# Download dependencies (utilize Docker cache)
 RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
-# 复制源代码
+# Copy source code
 COPY src ./src
 
-# 构建应用
+# Build application
 RUN ./mvnw clean package -DskipTests
 
-# 第二阶段：运行阶段
+# Second stage: Runtime stage
 FROM openjdk:21-jre-slim
 
-# 安装必要的工具
+# Install necessary tools
 RUN apt-get update && \
     apt-get install -y curl && \
     rm -rf /var/lib/apt/lists/*
 
-# 创建应用用户
+# Create application user
 RUN groupadd -r hsbc && useradd -r -g hsbc hsbc
 
-# 设置工作目录
+# Set working directory
 WORKDIR /app
 
-# 从构建阶段复制 JAR 文件
+# Copy JAR file from build stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# 更改文件所有者
+# Change file ownership
 RUN chown -R hsbc:hsbc /app
 
-# 切换到非 root 用户
+# Switch to non-root user
 USER hsbc
 
-# 暴露端口
+# Expose port
 EXPOSE 8080
 
-# 设置 JVM 参数
+# Set JVM parameters
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+PrintGC"
 
-# 健康检查
+# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-# 启动命令
+# Startup command
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 
-# 元数据标签
+# Metadata labels
 LABEL maintainer="HSBC Development Team <dev@hsbc.com>"
-LABEL description="汇丰银行交易管理系统"
+LABEL description="HSBC Transaction Management System"
 LABEL version="1.0.0"
-LABEL application="hsbc-transaction-management" 
+LABEL application="hsbc-transaction-management"
