@@ -1,0 +1,54 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: hsbc-transaction-management
+  
+  # 缓存配置
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=1h
+
+  # Jackson配置
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Shanghai
+
+# 日志配置
+logging:
+  level:
+    com.hsbc.transaction: INFO
+    org.springframework.cache: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,cache
+  endpoint:
+    health:
+      show-details: always
+
+# API文档配置
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+  info:
+    title: 汇丰银行交易管理系统 API
+    description: 汇丰银行交易管理系统的RESTful API文档
+    version: 1.0.0
+    contact:
+      name: HSBC Development Team
+      email: dev@hsbc.com 
