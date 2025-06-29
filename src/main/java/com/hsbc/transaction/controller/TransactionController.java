@@ -16,14 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 交易控制器 - RESTful API
- * 
+ * Transaction Controller - RESTful API
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
 @RestController
 @RequestMapping("/api/transactions")
-@Tag(name = "交易管理", description = "汇丰银行交易管理系统 API")
+@Tag(name = "Transaction Management", description = "HSBC Transaction Management System API")
 public class TransactionController {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
@@ -36,108 +36,101 @@ public class TransactionController {
     }
 
     /**
-     * 创建新交易
+     * Create new transaction
      */
     @PostMapping
-    @Operation(summary = "创建交易", description = "创建一个新的金融交易记录")
+    @Operation(summary = "Create Transaction", description = "Create a new financial transaction record")
     public ResponseEntity<TransactionResponse> createTransaction(
             @Valid @RequestBody TransactionRequest request) {
-        
-        logger.info("收到创建交易请求：{}", request);
+
+        logger.info("Received create transaction request: {}", request);
         TransactionResponse response = transactionService.createTransaction(request);
-        logger.info("交易创建成功，ID：{}", response.getId());
-        
+        logger.info("Transaction created successfully, ID: {}", response.getId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
-     * 根据ID获取交易
+     * Get transaction by ID
      */
     @GetMapping("/{id}")
-    @Operation(summary = "获取交易", description = "根据交易ID获取交易详情")
+    @Operation(summary = "Get Transaction", description = "Get transaction details by transaction ID")
     public ResponseEntity<TransactionResponse> getTransaction(
-            @Parameter(description = "交易ID", required = true)
+            @Parameter(description = "Transaction ID", required = true)
             @PathVariable String id) {
-        
-        logger.debug("查询交易，ID：{}", id);
+
+        logger.debug("Querying transaction, ID: {}", id);
         TransactionResponse response = transactionService.getTransactionById(id);
-        
         return ResponseEntity.ok(response);
     }
 
     /**
-     * 获取交易列表（分页）
+     * Get paginated transaction list
      */
     @GetMapping
-    @Operation(summary = "获取交易列表", description = "分页获取交易列表")
+    @Operation(summary = "Get Transaction List", description = "Get paginated transaction list")
     public ResponseEntity<PagedResponse<TransactionResponse>> getTransactions(
-            @Parameter(description = "页码（从0开始）", example = "0")
+            @Parameter(description = "Page number (starting from 0)", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            
-            @Parameter(description = "页面大小（1-100）", example = "10")
+
+            @Parameter(description = "Page size (1-100)", example = "10")
             @RequestParam(defaultValue = "10") int size) {
-        
-        logger.debug("分页查询交易，页码：{}，大小：{}", page, size);
+
+        logger.debug("Paginated query transactions, page: {}, size: {}", page, size);
         PagedResponse<TransactionResponse> response = transactionService.getTransactions(page, size);
-        
         return ResponseEntity.ok(response);
     }
 
     /**
-     * 更新交易
+     * Update transaction
      */
     @PutMapping("/{id}")
-    @Operation(summary = "更新交易", description = "更新现有交易的信息")
+    @Operation(summary = "Update Transaction", description = "Update existing transaction information")
     public ResponseEntity<TransactionResponse> updateTransaction(
-            @Parameter(description = "交易ID", required = true)
+            @Parameter(description = "Transaction ID", required = true)
             @PathVariable String id,
-            
             @Valid @RequestBody TransactionRequest request) {
-        
-        logger.info("收到更新交易请求，ID：{}，请求：{}", id, request);
+
+        logger.info("Received update transaction request, ID: {}, request: {}", id, request);
         TransactionResponse response = transactionService.updateTransaction(id, request);
-        logger.info("交易更新成功，ID：{}", response.getId());
-        
+        logger.info("Transaction updated successfully, ID: {}", response.getId());
         return ResponseEntity.ok(response);
     }
 
     /**
-     * 删除交易
+     * Delete transaction
      */
     @DeleteMapping("/{id}")
-    @Operation(summary = "删除交易", description = "根据交易ID删除交易记录")
+    @Operation(summary = "Delete Transaction", description = "Delete transaction record by transaction ID")
     public ResponseEntity<Void> deleteTransaction(
-            @Parameter(description = "交易ID", required = true)
+            @Parameter(description = "Transaction ID", required = true)
             @PathVariable String id) {
-        
-        logger.info("收到删除交易请求，ID：{}", id);
+
+        logger.info("Received delete transaction request, ID: {}", id);
         transactionService.deleteTransaction(id);
-        logger.info("交易删除成功，ID：{}", id);
-        
+        logger.info("Transaction deleted successfully, ID: {}", id);
         return ResponseEntity.noContent().build();
     }
 
     /**
-     * 检查交易是否存在
+     * Check if transaction exists
      */
     @GetMapping("/{id}/exists")
-    @Operation(summary = "检查交易存在", description = "检查指定ID的交易是否存在")
+    @Operation(summary = "Check Transaction Existence", description = "Check if transaction with specified ID exists")
     public ResponseEntity<Boolean> existsTransaction(
-            @Parameter(description = "交易ID", required = true)
+            @Parameter(description = "Transaction ID", required = true)
             @PathVariable String id) {
-        
-        logger.debug("检查交易是否存在，ID：{}", id);
+
+        logger.debug("Checking if transaction exists, ID: {}", id);
         boolean exists = transactionService.existsById(id);
-        
         return ResponseEntity.ok(exists);
     }
 
     /**
-     * 健康检查接口
+     * Health check endpoint
      */
     @GetMapping("/health")
-    @Operation(summary = "健康检查", description = "检查交易管理服务是否正常运行")
+    @Operation(summary = "Health Check", description = "Check if transaction management service is running normally")
     public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("交易管理系统运行正常");
+        return ResponseEntity.ok("Transaction Management System is running normally");
     }
-} 
+}

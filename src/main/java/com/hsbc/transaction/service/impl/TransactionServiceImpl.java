@@ -18,14 +18,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 交易服务实现类
- * 
+ * Transaction Service Implementation
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -34,12 +33,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
-    // 支持的货币类型
+    // Supported currency types
     private static final Set<String> SUPPORTED_CURRENCIES = Set.of(
             "USD", "EUR", "GBP", "JPY", "CNY", "HKD", "SGD", "AUD", "CAD", "CHF"
     );
 
-    // 支持的交易类型
+    // Supported transaction types
     private static final Set<String> SUPPORTED_TRANSACTION_TYPES = Set.of(
             "DEPOSIT", "WITHDRAWAL", "TRANSFER", "PAYMENT", "REFUND"
     );
@@ -54,19 +53,19 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @CacheEvict(value = CacheConfig.TRANSACTION_LIST_CACHE, allEntries = true)
     public TransactionResponse createTransaction(TransactionRequest request) {
-        logger.info("开始创建交易，请求：{}", request);
+        logger.info("Starting to create transaction, request: {}", request);
 
-        // 验证请求
+        // Validate request
         validateTransactionRequest(request);
 
-        // 检查参考编号是否重复
-        if (request.getReferenceNumber() != null && 
+        // Check reference number is duplicated
+        if (request.getReferenceNumber() != null &&
             !request.getReferenceNumber().trim().isEmpty() &&
             transactionRepository.existsByReferenceNumber(request.getReferenceNumber())) {
             throw DuplicateTransactionException.withReferenceNumber(request.getReferenceNumber());
         }
 
-        // 创建交易对象
+        // Create transaction object
         Transaction transaction = new Transaction(
                 request.getAmount(),
                 request.getCurrency(),
@@ -75,23 +74,23 @@ public class TransactionServiceImpl implements TransactionService {
                 request.getReferenceNumber()
         );
 
-        // 保存交易
+        // Save transaction
         try {
             Transaction savedTransaction = transactionRepository.save(transaction);
-            logger.info("交易创建成功，ID：{}", savedTransaction.getId());
+            logger.info("Transaction created successfully, ID: {}", savedTransaction.getId());
             return convertToResponse(savedTransaction);
         } catch (IllegalArgumentException e) {
-            throw new DuplicateTransactionException("创建交易失败：" + e.getMessage());
+            throw new DuplicateTransactionException("Failed to create transaction: " + e.getMessage());
         }
     }
 
     @Override
     @Cacheable(value = CacheConfig.TRANSACTION_CACHE, key = "#id")
     public TransactionResponse getTransactionById(String id) {
-        logger.debug("查询交易，ID：{}", id);
+        logger.debug("Querying transaction, ID: {}", id);
 
         if (id == null || id.trim().isEmpty()) {
-            throw new InvalidTransactionException("交易ID不能为空");
+            throw new InvalidTransactionException("Transaction ID cannot be empty");
         }
 
         Transaction transaction = transactionRepository.findById(id)
@@ -103,14 +102,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Cacheable(value = CacheConfig.TRANSACTION_LIST_CACHE, key = "'page:' + #page + ':size:' + #size")
     public PagedResponse<TransactionResponse> getTransactions(int page, int size) {
-        logger.debug("分页查询交易，页码：{}，大小：{}", page, size);
+        logger.debug("Paginated querying transaction, page: {}，size: {}", page, size);
 
-        // 验证分页参数
+        // Validate page parameters
         if (page < 0) {
-            throw new InvalidTransactionException("页码不能小于0");
+            throw new InvalidTransactionException("Page number cannot be less than 0");
         }
         if (size <= 0 || size > 100) {
-            throw new InvalidTransactionException("页面大小必须在1-100之间");
+            throw new InvalidTransactionException("Page size must be between 1-100");
         }
 
         List<Transaction> transactions = transactionRepository.findAll(page, size);
@@ -124,55 +123,55 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @CacheEvict(value = {CacheConfig.TRANSACTION_CACHE, CacheConfig.TRANSACTION_LIST_CACHE}, 
+    @CacheEvict(value = {CacheConfig.TRANSACTION_CACHE, CacheConfig.TRANSACTION_LIST_CACHE},
                 key = "#id", allEntries = true)
     public TransactionResponse updateTransaction(String id, TransactionRequest request) {
-        logger.info("开始更新交易，ID：{}，请求：{}", id, request);
+        logger.info("Starting to update transaction, ID: {}，request: {}", id, request);
 
         if (id == null || id.trim().isEmpty()) {
-            throw new InvalidTransactionException("交易ID不能为空");
+            throw new InvalidTransactionException("Transaction ID cannot be empty");
         }
 
-        // 验证请求
+        // Validate request
         validateTransactionRequest(request);
 
-        // 获取现有交易
+        // Get existing transaction
         Transaction existingTransaction = transactionRepository.findById(id)
                 .orElseThrow(() -> TransactionNotFoundException.withId(id));
 
-        // 检查参考编号是否重复（除了当前交易）
-        if (request.getReferenceNumber() != null && 
+        // Check reference number is duplicated (except current transaction)
+        if (request.getReferenceNumber() != null &&
             !request.getReferenceNumber().trim().isEmpty() &&
             !request.getReferenceNumber().equals(existingTransaction.getReferenceNumber()) &&
             transactionRepository.existsByReferenceNumber(request.getReferenceNumber())) {
             throw DuplicateTransactionException.withReferenceNumber(request.getReferenceNumber());
         }
 
-        // 更新交易信息
+        // Update transaction information
         existingTransaction.setAmount(request.getAmount());
         existingTransaction.setCurrency(request.getCurrency());
         existingTransaction.setTransactionType(request.getTransactionType());
         existingTransaction.setDescription(request.getDescription());
         existingTransaction.setReferenceNumber(request.getReferenceNumber());
 
-        // 保存更新
+        // Save update
         try {
             Transaction updatedTransaction = transactionRepository.save(existingTransaction);
-            logger.info("交易更新成功，ID：{}", updatedTransaction.getId());
+            logger.info("Transaction updated successfully, ID: {}", updatedTransaction.getId());
             return convertToResponse(updatedTransaction);
         } catch (IllegalArgumentException e) {
-            throw new DuplicateTransactionException("更新交易失败：" + e.getMessage());
+            throw new DuplicateTransactionException("Failed to update transaction: " + e.getMessage());
         }
     }
 
     @Override
-    @CacheEvict(value = {CacheConfig.TRANSACTION_CACHE, CacheConfig.TRANSACTION_LIST_CACHE}, 
+    @CacheEvict(value = {CacheConfig.TRANSACTION_CACHE, CacheConfig.TRANSACTION_LIST_CACHE},
                 key = "#id", allEntries = true)
     public void deleteTransaction(String id) {
-        logger.info("开始删除交易，ID：{}", id);
+        logger.info("Starting to delete transaction, ID: {}", id);
 
         if (id == null || id.trim().isEmpty()) {
-            throw new InvalidTransactionException("交易ID不能为空");
+            throw new InvalidTransactionException("Transaction ID cannot be empty");
         }
 
         if (!transactionRepository.existsById(id)) {
@@ -181,9 +180,9 @@ public class TransactionServiceImpl implements TransactionService {
 
         boolean deleted = transactionRepository.deleteById(id);
         if (deleted) {
-            logger.info("交易删除成功，ID：{}", id);
+            logger.info("Transaction deleted successfully, ID: {}", id);
         } else {
-            throw new RuntimeException("删除交易失败，ID：" + id);
+            throw new RuntimeException("Failed to delete transaction, ID: " + id);
         }
     }
 
@@ -196,27 +195,27 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * 验证交易请求
+     * Validate transaction request
      */
     private void validateTransactionRequest(TransactionRequest request) {
         if (request == null) {
-            throw new InvalidTransactionException("交易请求不能为空");
+            throw new InvalidTransactionException("Transaction request cannot be empty");
         }
 
-        // 验证金额
+        // Validate amount
         if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw InvalidTransactionException.invalidAmount();
         }
 
-        // 验证货币类型
-        if (request.getCurrency() == null || 
+        // Validate currency type
+        if (request.getCurrency() == null ||
             request.getCurrency().trim().isEmpty() ||
             !SUPPORTED_CURRENCIES.contains(request.getCurrency().toUpperCase())) {
             throw InvalidTransactionException.invalidCurrency(request.getCurrency());
         }
 
-        // 验证交易类型
-        if (request.getTransactionType() == null || 
+        // Validate transaction type
+        if (request.getTransactionType() == null ||
             request.getTransactionType().trim().isEmpty() ||
             !SUPPORTED_TRANSACTION_TYPES.contains(request.getTransactionType().toUpperCase())) {
             throw InvalidTransactionException.invalidTransactionType(request.getTransactionType());
@@ -224,7 +223,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * 转换为响应对象
+     * Convert to response object
      */
     private TransactionResponse convertToResponse(Transaction transaction) {
         return new TransactionResponse(
@@ -237,4 +236,4 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.getReferenceNumber()
         );
     }
-} 
+}

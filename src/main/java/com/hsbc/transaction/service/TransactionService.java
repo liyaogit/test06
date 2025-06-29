@@ -5,59 +5,59 @@ import com.hsbc.transaction.dto.TransactionRequest;
 import com.hsbc.transaction.dto.TransactionResponse;
 
 /**
- * 交易服务接口
- * 
+ * Transaction Service Interface
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
 public interface TransactionService {
 
     /**
-     * 创建新交易
-     * 
-     * @param request 交易请求
-     * @return 创建的交易响应
+     * Create new transaction
+     *
+     * @param request transaction request
+     * @return created transaction response
      */
     TransactionResponse createTransaction(TransactionRequest request);
 
     /**
-     * 根据ID获取交易
-     * 
-     * @param id 交易ID
-     * @return 交易响应
+     * Get transaction by ID
+     *
+     * @param id transaction ID
+     * @return transaction response
      */
     TransactionResponse getTransactionById(String id);
 
     /**
-     * 获取交易列表（分页）
-     * 
-     * @param page 页码（从0开始）
-     * @param size 页面大小
-     * @return 分页交易响应
+     * Get paginated transaction list
+     *
+     * @param page page number (starting from 0)
+     * @param size page size
+     * @return paginated transaction response
      */
     PagedResponse<TransactionResponse> getTransactions(int page, int size);
 
     /**
-     * 更新交易
-     * 
-     * @param id 交易ID
-     * @param request 更新请求
-     * @return 更新后的交易响应
+     * Update transaction
+     *
+     * @param id transaction ID
+     * @param request update request
+     * @return updated transaction response
      */
     TransactionResponse updateTransaction(String id, TransactionRequest request);
 
     /**
-     * 删除交易
-     * 
-     * @param id 交易ID
+     * Delete transaction
+     *
+     * @param id transaction ID
      */
     void deleteTransaction(String id);
 
     /**
-     * 检查交易是否存在
-     * 
-     * @param id 交易ID
-     * @return 是否存在
+     * Check if transaction exists
+     *
+     * @param id transaction ID
+     * @return whether exists
      */
     boolean existsById(String id);
-} 
+}

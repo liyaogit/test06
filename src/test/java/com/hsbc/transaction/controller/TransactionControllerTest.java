@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 交易控制器测试类
- * 
+ *
  * @author HSBC Development Team
  * @version 1.0.0
  */
@@ -277,7 +277,7 @@ class TransactionControllerTest {
         // When & Then
         mockMvc.perform(get("/api/transactions/health"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("\"交易管理系统运行正常\""));
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Transaction Management System is running normally"));
     }
-} 
+}
